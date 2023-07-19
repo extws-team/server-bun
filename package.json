@@ -1,0 +1,14 @@
+{
+  "name": "driver-bun",
+  "module": "main.js",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "extws-server": "^1.0.0"
+  }
+}
