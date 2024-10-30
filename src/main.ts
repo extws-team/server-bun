@@ -1,4 +1,4 @@
-import { ExtWS, OutcomePayloadEventType } from '@extws/server';
+import { ExtWS } from '@extws/server';
 import { ExtWSBunClient } from './client.js';
 import { Server } from 'bun';
 import { ServerData } from './types.js';
@@ -9,7 +9,6 @@ export class ExtWSBunServer extends ExtWS {
 	constructor({
 		path = '/ws',
 		port,
-		// payload_max_length,
 	}: {
 		path?: string,
 		port: number,
@@ -21,7 +20,6 @@ export class ExtWSBunServer extends ExtWS {
 		this.bun_server = Bun.serve<ServerData>(
 			{
 				port,
-				// perMessageDeflate: true,
 				fetch(request, server) {
 					const url = new URL(request.url);
 					url.protocol = 'ws:';
@@ -82,26 +80,6 @@ export class ExtWSBunServer extends ExtWS {
 				},
 			},
 		);
-
-		this.on<GroupPayload>(
-			OutcomePayloadEventType.GROUP,
-			(event) => {
-				this.publish(
-					`g-${event.group_id}`, // TODO: импортировать префикс
-					event.payload,
-				);
-			}
-		);
-
-		this.on<BroadcastPayload>(
-			OutcomePayloadEventType.BROADCAST,
-			(event) => {
-				this.publish(
-					'broadcast', // TODO: импортировать имя группы
-					event.payload,
-				);
-			}
-		);
 	}
 
 	publish(channel: string, payload: string) {
@@ -110,13 +88,4 @@ export class ExtWSBunServer extends ExtWS {
 			payload,
 		);
 	}
-}
-
-interface BroadcastPayload extends Event {
-	payload: string;
-}
-
-interface GroupPayload extends Event {
-	group_id: string;
-	payload: string;
 }

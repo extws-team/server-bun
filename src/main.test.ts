@@ -19,16 +19,15 @@ const ERROR_TIMEOUT = 'Timeout: No message received within the specified time';
 /**
  * Wait for a message from the target WebSocket with a timeout.
  * @param target - The target WebSocket.
- * @param timeoutMs - The timeout in milliseconds (default 5000 ms).
  * @returns - A promise that resolves with the message or rejects on timeout.
  */
-function waitMessage(target: WebSocket, timeout_ms = 1000): Promise<string> {
+function waitMessage(target: WebSocket): Promise<string> {
 	return new Promise<string>((resolve, reject) => {
 		const timeout = setTimeout(
 			() => {
 				reject(new Error(ERROR_TIMEOUT));
 			},
-			timeout_ms,
+			100,
 		);
 
 		target.addEventListener(
@@ -42,7 +41,14 @@ function waitMessage(target: WebSocket, timeout_ms = 1000): Promise<string> {
 	});
 }
 
-async function createClient(): Promise<{ websocket: WebSocket, extwsClient: ExtWSClient }> {
+/**
+ * Create a WebSocket client and get the corresponding ExtWSClient.
+ * @returns -
+ */
+async function createClient(): Promise<{
+	websocket: WebSocket,
+	extwsClient: ExtWSClient,
+}> {
 	const websocket = new WebSocket(WEBSOCKET_URL);
 
 	await new Promise((resolve) => {
@@ -69,36 +75,30 @@ async function createClient(): Promise<{ websocket: WebSocket, extwsClient: ExtW
 const client = await createClient();
 
 describe('ExtWSBunServer', () => {
-	test('ping', async () => {
+	test('ping', () => {
 		const promise = waitMessage(client.websocket);
 
 		client.websocket.send('2');
 
-		expect(
-			await promise,
-		).toBe('3');
+		expect(promise).resolves.toBe('3');
 	});
 
-	test('message', async () => {
+	test('message', () => {
 		const promise = waitMessage(client.websocket);
 
 		client.websocket.send('4hello{"name":"world"}');
 
-		expect(
-			await promise,
-		).toBe('4hello{"text":"Hello, world!"}');
+		expect(promise).resolves.toBe('4hello{"text":"Hello, world!"}');
 	});
 });
 
 describe('broadcast', () => {
-	test('broadcast', async () => {
+	test('broadcast', () => {
 		const promise = waitMessage(client.websocket);
 
 		testBroadcast();
 
-		expect(
-			await promise,
-		).toBe('4{"foo":"bar"}');
+		expect(promise).resolves.toBe('4{"foo":"bar"}');
 	});
 });
 
@@ -111,18 +111,16 @@ describe('groups', () => {
 		expect(promise).rejects.toThrowError(ERROR_TIMEOUT);
 	});
 
-	test('joined', async () => {
+	test('joined', () => {
 		const promise = waitMessage(client.websocket);
 
 		testGroupJoin(client.extwsClient, 'group');
 		testSendToGroup('group');
 
-		expect(
-			await promise,
-		).toBe('4{"foo":"bar"}');
+		expect(promise).resolves.toBe('4{"foo":"bar"}');
 	});
 
-	test('joined to another group', async () => {
+	test('joined to another group', () => {
 		const promise = waitMessage(client.websocket);
 
 		testGroupJoin(client.extwsClient, 'group');
@@ -131,7 +129,7 @@ describe('groups', () => {
 		expect(promise).rejects.toThrowError(ERROR_TIMEOUT);
 	});
 
-	test('left', async () => {
+	test('left', () => {
 		const promise = waitMessage(client.websocket);
 
 		testGroupLeave(client.extwsClient, 'group');
@@ -142,14 +140,12 @@ describe('groups', () => {
 });
 
 describe('send to socket', () => {
-	test('to existing client', async () => {
+	test('to existing client', () => {
 		const promise = waitMessage(client.websocket);
 
 		testSendToSocket(client.extwsClient.id);
 
-		expect(
-			await promise,
-		).toBe('4{"foo":"bar"}');
+		expect(promise).resolves.toBe('4{"foo":"bar"}');
 	});
 
 	test('to non-existing client', () => {
@@ -162,7 +158,7 @@ describe('send to socket', () => {
 });
 
 describe('disconnect', () => {
-	test('by server', async () => {
+	test('by server', () => {
 		const promise = new Promise<boolean>((resolve) => {
 			client.websocket.addEventListener(
 				'close',
@@ -175,7 +171,7 @@ describe('disconnect', () => {
 
 		client.extwsClient.disconnect();
 
-		expect(await promise).toBe(true);
+		expect(promise).resolves.toBe(true);
 	});
 
 	test('by client', async () => {
