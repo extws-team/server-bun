@@ -1,10 +1,9 @@
 {
 	"name": "@extws/server-bun",
 	"version": "0.2.0-beta.2",
-	"description": "ExtWS for Bun",
+	"description": "ExtWS server for Bun",
 	"publishConfig": {
-		"access": "public",
-		"tag": "beta"
+		"access": "public"
 	},
 	"type": "module",
 	"main": "dist/esm/main.js",
@@ -23,17 +22,28 @@
 	},
 	"devDependencies": {
 		"@kirick/eslint-config": "latest",
-		"@types/bun": "^1.1.11",
-		"eslint": "9.8.0",
-		"typescript": "^5.6.3",
-		"vitest": "^2.1.2"
+		"@types/bun": "^1.1.6",
+		"eslint": "9.10.0",
+		"typescript": "5.5.4",
+		"vitest": "2.1.1"
 	},
 	"scripts": {
-		"build": "rm -r dist ; bun run build:ts && bun run build:cjs",
+		"build": "bun run build:ts && bun run build:cjs",
 		"build:cjs": "bunx esbuild --bundle --platform=node --format=cjs --packages=external --outfile=dist/main.cjs dist/esm/main.js",
-		"build:ts": "rm -r dist/esm ; tsc",
+		"build:ts": "rm -r dist/esm dist/types ; tsc",
 		"lint": "eslint . && tsc --skipLibCheck --noemit",
 		"publish:npm": "bun run build && bun run lint && bun run test && npm publish",
-		"test": "bun test --coverage src/"
-	}
+		"test": "bun test --coverage"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/extws-team/server-bun.git"
+	},
+	"keywords": [],
+	"author": "Daniil Kirichenko (https://twitter.com/kirickme)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/extws-team/server-bun/issues"
+	},
+	"homepage": "https://github.com/extws-team/server-bun#readme"
 }
