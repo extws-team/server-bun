@@ -1,0 +1,38 @@
+{
+	"name": "server-bun",
+	"version": "0.1.0-beta.2",
+	"description": "Bun server for ExtWS Server.",
+	"publishConfig": {
+		"access": "public",
+		"tag": "beta"
+	},
+	"type": "module",
+	"main": "dist/esm/main.js",
+	"types": "dist/esm/main.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/esm/main.js",
+			"require": "./dist/main.cjs"
+		}
+	},
+	"dependencies": {
+		"@extws/server": "0.2.0-beta.2"
+	},
+	"peerDependencies": {
+		"@kirick/ip": "^0.1.1"
+	},
+	"devDependencies": {
+		"@kirick/eslint-config": "latest",
+		"@types/bun": "^1.1.11",
+		"@types/node": "^22.7.4",
+		"vitest": "^2.1.2"
+	},
+	"scripts": {
+		"build": "rm -r dist ; bun run build:ts && bun run build:cjs",
+		"build:cjs": "bunx esbuild --bundle --platform=node --format=cjs --packages=external --outfile=dist/main.cjs dist/esm/main.js",
+		"build:ts": "rm -r dist/esm ; tsc",
+		"lint": "eslint . && tsc --skipLibCheck --noemit",
+		"publish:npm": "bun run build && bun run lint && bun run test && npm publish",
+		"test": "bun test --coverage src/"
+	}
+}
