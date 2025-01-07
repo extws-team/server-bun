@@ -13,11 +13,14 @@ export class ExtWSBunClient extends ExtWSClient {
 		server: ExtWSBunServer,
 		bun_client: ServerWebSocket<ServerData>,
 	) {
-		super(server, {
-			url: bun_client.data.url,
-			headers: bun_client.data.headers,
-			ip: new IP(bun_client.remoteAddress),
-		});
+		super(
+			server,
+			{
+				url: bun_client.data.url,
+				headers: bun_client.data.headers,
+				ip: new IP(bun_client.remoteAddress),
+			},
+		);
 
 		this.bun_client = bun_client;
 	}
