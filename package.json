@@ -23,6 +23,7 @@
 	"devDependencies": {
 		"@kirick/eslint-config": "^0.1.30",
 		"@types/bun": "^1.1.6",
+		"eslint": "^9.8.0",
 		"typescript": "5.5.4",
 		"vitest": "2.1.2"
 	},
