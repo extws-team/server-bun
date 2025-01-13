@@ -184,5 +184,5 @@ client.leave('room1');
 To stop the server, call the `close` method:
 
 ```typescript
-server.close();
+await server.close();
 ```
