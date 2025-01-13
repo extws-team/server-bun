@@ -88,4 +88,8 @@ export class ExtWSBunServer extends ExtWS {
 			payload,
 		);
 	}
+
+	async close() {
+		await this.bun_server.stop();
+	}
 }

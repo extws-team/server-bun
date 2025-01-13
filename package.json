@@ -1,6 +1,6 @@
 {
 	"name": "@extws/server-bun",
-	"version": "0.2.0-beta.2",
+	"version": "0.2.0-beta.3",
 	"description": "ExtWS server for Bun",
 	"publishConfig": {
 		"access": "public"
@@ -15,7 +15,7 @@
 		}
 	},
 	"dependencies": {
-		"@extws/server": "^0.2.0-beta.3"
+		"@extws/server": "^0.2.0-beta.9"
 	},
 	"peerDependencies": {
 		"@kirick/ip": "^0.1.1"

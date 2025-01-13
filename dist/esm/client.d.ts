@@ -5,8 +5,8 @@ import { ExtWSBunServer } from './main.js';
 export declare class ExtWSBunClient extends ExtWSClient {
     private bun_client;
     constructor(server: ExtWSBunServer, bun_client: ServerWebSocket<ServerData>);
-    addToGroup(group_id: string): void;
-    removeFromGroup(group_id: string): void;
-    sendPayload(payload: string): void;
+    protected addToGroup(group_id: string): void;
+    protected removeFromGroup(group_id: string): void;
+    protected sendPayload(payload: string): void;
     disconnect(): void;
 }

@@ -25,7 +25,7 @@ export class ExtWSBunClient extends ExtWSClient {
 		this.bun_client = bun_client;
 	}
 
-	addToGroup(group_id: string) {
+	protected addToGroup(group_id: string) {
 		try {
 			this.bun_client.subscribe(group_id);
 		}
@@ -36,7 +36,7 @@ export class ExtWSBunClient extends ExtWSClient {
 		}
 	}
 
-	removeFromGroup(group_id: string) {
+	protected removeFromGroup(group_id: string) {
 		try {
 			this.bun_client.unsubscribe(group_id);
 		}
@@ -47,7 +47,7 @@ export class ExtWSBunClient extends ExtWSClient {
 		}
 	}
 
-	sendPayload(payload: string) {
+	protected sendPayload(payload: string) {
 		try {
 			this.bun_client.send(payload);
 		}

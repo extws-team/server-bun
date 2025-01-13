@@ -132,4 +132,7 @@ class ExtWSBunServer extends import_server2.ExtWS {
   publish(channel, payload) {
     this.bun_server.publish(channel, payload);
   }
+  async close() {
+    await this.bun_server.stop();
+  }
 }
