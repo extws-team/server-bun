@@ -48,7 +48,7 @@ To listen for events sent by the client, use the `on` method:
 ```typescript
 // Subscribe to all messages with type 'chat'
 server.on('chat', (event) => {
-  console.log('Chat message:', event.data);
+  console.log('Chat message:', event.detail);
   console.log('From client:', event.client.id);
 });
 ```
@@ -64,10 +64,10 @@ interface ChatMessage {
 }
 
 // Typed event subscription
-server.on<ExtWSEvent<ChatMessage>>('chat', (event) => {
+server.on('chat', (event: ExtWSEvent<ChatMessage>) => {
   // event.data is typed as ChatMessage
-  console.log(event.data.message);
-  console.log(event.data.timestamp);
+  console.log(event.detail.message);
+  console.log(event.detail.timestamp);
 });
 ```
 
@@ -109,7 +109,7 @@ Methods `on` and `once` return a function that, when called, removes the event s
 
 ```typescript
 const off = server.on('message', (event) => {
-  console.log(event.data);
+  console.log(event.detail);
 });
 
 // Remove event subscription
