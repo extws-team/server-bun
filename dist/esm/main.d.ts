@@ -6,5 +6,4 @@ export declare class ExtWSBunServer extends ExtWS {
         port: number;
     });
     publish(channel: string, payload: string): void;
-    close(): Promise<void>;
 }

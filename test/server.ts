@@ -1,8 +1,8 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import {
+import type {
 	ExtWSEvent,
-	type ExtWSClient,
+	ExtWSClient,
 } from '@extws/server';
 import { ExtWSBunServer } from '../src/main.js';
 
@@ -10,13 +10,13 @@ export const extwsServer = new ExtWSBunServer({
 	port: 8080,
 });
 
-extwsServer.on<ExtWSEvent<{ name: string }>>(
+extwsServer.on(
 	'hello',
-	(event) => {
+	(event: ExtWSEvent<{ name: string }>) => {
 		event.client.send(
 			'hello',
 			{
-				text: `Hello, ${event.data.name}!`,
+				text: `Hello, ${event.detail.name}!`,
 			},
 		);
 	},

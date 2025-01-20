@@ -3,6 +3,7 @@ import {
 	describe,
 	test,
 	expect,
+	afterAll,
 } from 'bun:test';
 import {
 	extwsServer,
@@ -15,6 +16,10 @@ import {
 
 const WEBSOCKET_URL = 'ws://localhost:8080/ws';
 const ERROR_TIMEOUT = 'Timeout: No message received within the specified time';
+
+// afterAll(async () => {
+// 	await extwsServer.close();
+// });
 
 /**
  * Wait for a message from the target WebSocket with a timeout.

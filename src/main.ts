@@ -89,7 +89,8 @@ export class ExtWSBunServer extends ExtWS {
 		);
 	}
 
-	async close() {
-		await this.bun_server.stop();
-	}
+	// TODO: investigate why that call hangs
+	// async close() {
+	// 	await this.bun_server.stop();
+	// }
 }
