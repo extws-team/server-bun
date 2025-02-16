@@ -33,6 +33,7 @@ __export(exports_main, {
 });
 module.exports = __toCommonJS(exports_main);
 var import_server2 = require("@extws/server");
+var import_ip2 = require("@kirick/ip");
 
 // src/client.ts
 var import_server = require("@extws/server");
@@ -104,7 +105,15 @@ class ExtWSBunServer extends import_server2.ExtWS {
         url.port = port_string;
         if (url.pathname.startsWith(path)) {
           const headers = headersToMap(request.headers);
-          const upgrade_response = await this.options?.onBeforeUpgrade?.(url, headers);
+          const ip = server.requestIP(request)?.address;
+          if (!ip) {
+            throw new Error("IP is not defined.");
+          }
+          const upgrade_response = await this.options?.onBeforeUpgrade?.({
+            url,
+            headers,
+            ip: new import_ip2.IP(ip)
+          });
           if (upgrade_response) {
             return new Response(upgrade_response.body ?? "", {
               status: upgrade_response.status,

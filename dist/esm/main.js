@@ -1,4 +1,5 @@
 import { ExtWS } from '@extws/server';
+import { IP } from '@kirick/ip';
 import { ExtWSBunClient } from './client.js';
 /**
  * Convert `Headers` object to `Map`.
@@ -22,7 +23,15 @@ export class ExtWSBunServer extends ExtWS {
                 url.port = port_string;
                 if (url.pathname.startsWith(path)) {
                     const headers = headersToMap(request.headers);
-                    const upgrade_response = await this.options?.onBeforeUpgrade?.(url, headers);
+                    const ip = server.requestIP(request)?.address;
+                    if (!ip) {
+                        throw new Error('IP is not defined.');
+                    }
+                    const upgrade_response = await this.options?.onBeforeUpgrade?.({
+                        url,
+                        headers,
+                        ip: new IP(ip),
+                    });
                     if (upgrade_response) {
                         return new Response(upgrade_response.body ?? '', {
                             status: upgrade_response.status,
