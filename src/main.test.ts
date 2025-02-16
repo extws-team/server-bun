@@ -1,9 +1,9 @@
 import { type ExtWSClient } from '@extws/server';
 import {
+	// afterAll,
 	describe,
-	test,
 	expect,
-	afterAll,
+	test,
 } from 'bun:test';
 import {
 	extwsServer,
@@ -48,21 +48,26 @@ function waitMessage(target: WebSocket): Promise<string> {
 
 /**
  * Create a WebSocket client and get the corresponding ExtWSClient.
+ * @param path_postfix - The path postfix for the WebSocket.
  * @returns -
  */
-async function createClient(): Promise<{
+async function createClient(path_postfix?: string): Promise<{
 	websocket: WebSocket,
 	extwsClient: ExtWSClient,
 }> {
-	const websocket = new WebSocket(WEBSOCKET_URL);
+	const websocket = new WebSocket(WEBSOCKET_URL + (path_postfix ?? ''));
 
-	await new Promise((resolve) => {
+	await new Promise((resolve, reject) => {
 		websocket.addEventListener(
 			'open',
 			resolve,
-			{
-				once: true,
-			},
+			{ once: true },
+		);
+
+		websocket.addEventListener(
+			'error',
+			reject,
+			{ once: true },
 		);
 	});
 
@@ -80,6 +85,22 @@ async function createClient(): Promise<{
 const client = await createClient();
 
 describe('ExtWSBunServer', () => {
+	test('onBeforeUpgrade hook', async () => {
+		const response = await fetch(
+			`${WEBSOCKET_URL.replace('ws://', 'http://')}?drop=1`,
+			{
+				headers: {
+					'Connection': 'Upgrade',
+					'Upgrade': 'websocket',
+					'Sec-WebSocket-Key': 'dGhlIHNhbXBsZSBub25jZQ==',
+					'Sec-WebSocket-Version': '13',
+				},
+			},
+		);
+
+		expect(response.status).toBe(400);
+	});
+
 	test('ping', () => {
 		const promise = waitMessage(client.websocket);
 

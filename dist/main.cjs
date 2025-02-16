@@ -82,26 +82,42 @@ class ExtWSBunClient extends import_server.ExtWSClient {
 }
 
 // src/main.ts
+function headersToMap(headers) {
+  return new Map(Object.entries(headers.toJSON()));
+}
+
 class ExtWSBunServer extends import_server2.ExtWS {
   bun_server;
   constructor({
     path = "/ws",
-    port
+    port,
+    ...options_rest
   }) {
-    super();
+    super(options_rest);
     const port_string = String(port);
     this.bun_server = Bun.serve({
       port,
-      fetch(request, server) {
+      fetch: async (request, server) => {
         const url = new URL(request.url);
         url.protocol = "ws:";
         url.host = request.headers.get("host") ?? "";
         url.port = port_string;
         if (url.pathname.startsWith(path)) {
+          const headers = headersToMap(request.headers);
+          const upgrade_response = await this.options?.onBeforeUpgrade?.(url, headers);
+          if (upgrade_response) {
+            return new Response(upgrade_response.body ?? "", {
+              status: upgrade_response.status,
+              headers: upgrade_response.headers ? new Headers([
+                ...upgrade_response.headers.entries()
+              ]) : undefined
+            });
+          }
           server.upgrade(request, {
             data: {
+              extws_client_id: "",
               url,
-              headers: request.headers
+              headers
             }
           });
           return;

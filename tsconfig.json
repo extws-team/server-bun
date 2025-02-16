@@ -14,12 +14,13 @@
 		"declaration": true,
 		"declarationDir": "dist/esm",
 		"target": "esnext",
-		"module": "esnext",
+		"module": "nodenext",
 		"lib": [
 			"ESNext",
-			"ES2021.String"
+			"ES2021.String",
+			"DOM"
 		],
-		"moduleResolution": "node",
+		"moduleResolution": "nodenext",
 		"allowSyntheticDefaultImports": true,
 		"skipLibCheck": true,
 		"strict": true,

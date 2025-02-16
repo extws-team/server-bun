@@ -1,7 +1,21 @@
 import { ExtWS } from '@extws/server';
+import { type ExtWSOnBeforeUpgradeHandler } from '@extws/server/dev';
 import { ExtWSBunClient } from './client.js';
 import { Server } from 'bun';
 import { ServerData } from './types.js';
+
+/**
+ * Convert `Headers` object to `Map`.
+ * @param headers Headers object.
+ * @returns Map of headers.
+ */
+function headersToMap(headers: Headers) {
+	return new Map<string, string>(
+		Object.entries(
+			headers.toJSON(),
+		),
+	);
+}
 
 export class ExtWSBunServer extends ExtWS {
 	private bun_server: Server;
@@ -9,31 +23,50 @@ export class ExtWSBunServer extends ExtWS {
 	constructor({
 		path = '/ws',
 		port,
+		...options_rest
 	}: {
 		path?: string,
 		port: number,
+		onBeforeUpgrade?: ExtWSOnBeforeUpgradeHandler,
 	}) {
-		super();
+		super(options_rest);
 
 		const port_string = String(port);
 
 		this.bun_server = Bun.serve<ServerData>(
 			{
 				port,
-				fetch(request, server) {
+				fetch: async (request, server) => {
 					const url = new URL(request.url);
 					url.protocol = 'ws:';
 					url.host = request.headers.get('host') ?? '';
 					url.port = port_string;
 
 					if (url.pathname.startsWith(path)) {
+						const headers = headersToMap(request.headers);
+						const upgrade_response = await this.options?.onBeforeUpgrade?.(url, headers);
+						if (upgrade_response) {
+							return new Response(
+								upgrade_response.body ?? '',
+								{
+									status: upgrade_response.status,
+									headers: upgrade_response.headers
+										? new Headers([
+											...upgrade_response.headers.entries(),
+										])
+										: undefined,
+								},
+							);
+						}
+
 						server.upgrade(
 							request,
 							{
 								data: {
+									extws_client_id: '',
 									url,
-									headers: request.headers,
-								},
+									headers,
+								} satisfies ServerData,
 							},
 						);
 
