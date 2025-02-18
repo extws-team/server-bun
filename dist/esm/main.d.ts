@@ -9,3 +9,4 @@ export declare class ExtWSBunServer extends ExtWS {
     });
     publish(channel: string, payload: string): void;
 }
+export { type ExtWSBunClient } from './client.js';

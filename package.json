@@ -15,7 +15,7 @@
 		}
 	},
 	"dependencies": {
-		"@extws/server": "github:extws-team/server#717a30667bcb05020f708ff4c7f3691d531b09f1"
+		"@extws/server": "github:extws-team/server#dev-kirick"
 	},
 	"peerDependencies": {
 		"@kirick/ip": "^0.1.1"
@@ -31,8 +31,8 @@
 		"build": "bun run build:ts && bun run build:cjs",
 		"build:cjs": "bun build src/main.ts --outfile=dist/main.cjs --platform=node --format=cjs --packages=external",
 		"build:ts": "rm -r dist/esm dist/types ; tsc",
+		"check": "bun run lint && bun run build && bun run test",
 		"lint": "eslint . && tsc --skipLibCheck --noemit",
-		"publish:npm": "bun run lint && bun run build && bun run test && npm publish",
 		"test": "bun test --coverage"
 	},
 	"repository": {

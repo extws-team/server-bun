@@ -11,6 +11,7 @@ function headersToMap(headers) {
 }
 export class ExtWSBunServer extends ExtWS {
     bun_server;
+    // eslint-disable-next-line max-lines-per-function
     constructor({ path = '/ws', port, ...options_rest }) {
         super(options_rest);
         const port_string = String(port);
@@ -27,46 +28,58 @@ export class ExtWSBunServer extends ExtWS {
                     if (!ip) {
                         throw new Error('IP is not defined.');
                     }
-                    const upgrade_response = await this.options?.onBeforeUpgrade?.({
-                        url,
-                        headers,
-                        ip: new IP(ip),
-                    });
-                    if (upgrade_response) {
-                        return new Response(upgrade_response.body ?? '', {
-                            status: upgrade_response.status,
-                            headers: upgrade_response.headers
-                                ? new Headers([
-                                    ...upgrade_response.headers.entries(),
-                                ])
-                                : undefined,
-                        });
-                    }
-                    server.upgrade(request, {
-                        data: {
-                            extws_client_id: '',
+                    try {
+                        const upgrade_response = await this.options?.onBeforeUpgrade?.({
                             url,
                             headers,
-                        },
-                    });
-                    return;
+                            ip: new IP(ip),
+                        });
+                        if (upgrade_response) {
+                            const response_headers = new Headers();
+                            if (upgrade_response.headers) {
+                                // eslint-disable-next-line max-depth
+                                for (const [key, value] of Object.entries(upgrade_response.headers)) {
+                                    // eslint-disable-next-line max-depth
+                                    if (value !== undefined) {
+                                        response_headers.set(key, value);
+                                    }
+                                }
+                            }
+                            return new Response(upgrade_response.body ?? '', {
+                                status: upgrade_response.status,
+                                headers: response_headers,
+                            });
+                        }
+                        server.upgrade(request, {
+                            data: {
+                                id: '',
+                                url,
+                                headers,
+                            },
+                        });
+                        return;
+                    }
+                    catch (error) {
+                        // eslint-disable-next-line no-console
+                        console.error(error);
+                    }
                 }
-                return new Response('Upgrade failed', { status: 500 });
+                return new Response('', { status: 500 });
             },
             websocket: {
                 open: (bun_client) => {
                     const client = new ExtWSBunClient(this, bun_client);
-                    bun_client.data.extws_client_id = client.id;
+                    bun_client.data.id = client.id;
                     this.onConnect(client);
                 },
                 message: (bun_client, payload) => {
-                    const client = this.clients.get(bun_client.data.extws_client_id);
+                    const client = this.clients.get(bun_client.data.id);
                     if (client) {
                         this.onMessage(client, payload);
                     }
                 },
                 close: (bun_client) => {
-                    const client = this.clients.get(bun_client.data.extws_client_id);
+                    const client = this.clients.get(bun_client.data.id);
                     if (client) {
                         client.disconnect();
                     }

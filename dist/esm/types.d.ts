@@ -1,5 +1,5 @@
-export interface ServerData {
+export type ServerData = {
+    id: string;
     url: URL;
     headers: Map<string, string>;
-    extws_client_id: string;
-}
+};

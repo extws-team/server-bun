@@ -21,6 +21,7 @@ function headersToMap(headers: Headers) {
 export class ExtWSBunServer extends ExtWS {
 	private bun_server: Server;
 
+	// eslint-disable-next-line max-lines-per-function
 	constructor({
 		path = '/ws',
 		port,
@@ -51,42 +52,55 @@ export class ExtWSBunServer extends ExtWS {
 							throw new Error('IP is not defined.');
 						}
 
-						const upgrade_response = await this.options?.onBeforeUpgrade?.({
-							url,
-							headers,
-							ip: new IP(ip),
-						});
+						try {
+							const upgrade_response = await this.options?.onBeforeUpgrade?.({
+								url,
+								headers,
+								ip: new IP(ip),
+							});
 
-						if (upgrade_response) {
-							return new Response(
-								upgrade_response.body ?? '',
+							if (upgrade_response) {
+								const response_headers = new Headers();
+								if (upgrade_response.headers) {
+									// eslint-disable-next-line max-depth
+									for (const [ key, value ] of Object.entries(upgrade_response.headers)) {
+										// eslint-disable-next-line max-depth
+										if (value !== undefined) {
+											response_headers.set(key, value);
+										}
+									}
+								}
+
+								return new Response(
+									upgrade_response.body ?? '',
+									{
+										status: upgrade_response.status,
+										headers: response_headers,
+									},
+								);
+							}
+
+							server.upgrade(
+								request,
 								{
-									status: upgrade_response.status,
-									headers: upgrade_response.headers
-										? new Headers([
-											...upgrade_response.headers.entries(),
-										])
-										: undefined,
+									data: {
+										id: '',
+										url,
+										headers,
+									} satisfies ServerData,
 								},
 							);
+
+							return;
 						}
-
-						server.upgrade(
-							request,
-							{
-								data: {
-									extws_client_id: '',
-									url,
-									headers,
-								} satisfies ServerData,
-							},
-						);
-
-						return;
+						catch (error) {
+							// eslint-disable-next-line no-console
+							console.error(error);
+						}
 					}
 
 					return new Response(
-						'Upgrade failed',
+						'',
 						{ status: 500 },
 					);
 				},
@@ -97,13 +111,13 @@ export class ExtWSBunServer extends ExtWS {
 							bun_client,
 						);
 
-						bun_client.data.extws_client_id = client.id;
+						bun_client.data.id = client.id;
 
 						this.onConnect(client);
 					},
 					message: (bun_client, payload) => {
 						const client = this.clients.get(
-							bun_client.data.extws_client_id,
+							bun_client.data.id,
 						);
 
 						if (client) {
@@ -115,7 +129,7 @@ export class ExtWSBunServer extends ExtWS {
 					},
 					close: (bun_client) => {
 						const client = this.clients.get(
-							bun_client.data.extws_client_id,
+							bun_client.data.id,
 						);
 
 						if (client) {
@@ -139,3 +153,5 @@ export class ExtWSBunServer extends ExtWS {
 	// 	await this.bun_server.stop();
 	// }
 }
+
+export { type ExtWSBunClient } from './client.js';
