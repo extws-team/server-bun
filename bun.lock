@@ -4,7 +4,7 @@
     "": {
       "name": "@extws/server-bun",
       "dependencies": {
-        "@extws/server": "github:extws-team/server#dev-kirick",
+        "@extws/server": "github:extws-team/server#36d07e1f69ef0360f703bc85619c47d8099d490e",
       },
       "devDependencies": {
         "@kirick/eslint-config": "0.1.30",
@@ -85,7 +85,7 @@
 
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.1.0", "", { "dependencies": { "levn": "^0.4.1" } }, "sha512-autAXT203ixhqei9xt+qkYOvY8l6LAFIdT2UXc/RPNeUVfqRF1BV94GTJyVPFKT8nFM6MyVJhjLj9E8JWvf5zQ=="],
 
-    "@extws/server": ["@extws/server@github:extws-team/server#c3e685e", { "dependencies": { "nanoid": "3.3.8", "neoevents": "^0.2.0" }, "peerDependencies": { "@kirick/ip": "^0.1.1" } }, "extws-team-server-c3e685e"],
+    "@extws/server": ["@extws/server@github:extws-team/server#36d07e1", { "dependencies": { "nanoid": "3.3.8", "neoevents": "^0.2.0" }, "peerDependencies": { "@kirick/ip": "^0.1.1" } }, "extws-team-server-36d07e1"],
 
     "@humanwhocodes/module-importer": ["@humanwhocodes/module-importer@1.0.1", "", {}, "sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA=="],
 

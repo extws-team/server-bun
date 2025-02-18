@@ -25,9 +25,9 @@ export class ExtWSBunClient extends ExtWSClient {
 		this.bun_client = bun_client;
 	}
 
-	protected addToGroup(group_id: string) {
+	protected addToChannel(channel_id: string) {
 		try {
-			this.bun_client.subscribe(group_id);
+			this.bun_client.subscribe(channel_id);
 		}
 		catch (error) {
 			// eslint-disable-next-line no-console
@@ -36,9 +36,9 @@ export class ExtWSBunClient extends ExtWSClient {
 		}
 	}
 
-	protected removeFromGroup(group_id: string) {
+	protected removeFromChannel(channel_id: string) {
 		try {
-			this.bun_client.unsubscribe(group_id);
+			this.bun_client.unsubscribe(channel_id);
 		}
 		catch (error) {
 			// eslint-disable-next-line no-console
