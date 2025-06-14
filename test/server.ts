@@ -14,9 +14,12 @@ export const extwsServer = new ExtWSBunServer({
 		});
 
 		if (url.searchParams.has('drop')) {
-			return {
+			return new Response('drop', {
 				status: 400,
-			};
+				headers: {
+					'x-test': 'test',
+				},
+			});
 		}
 	},
 });

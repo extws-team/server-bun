@@ -1,21 +1,25 @@
 {
 	"name": "@extws/server-bun",
-	"version": "0.2.1-dev",
+	"version": "0.3.0-dev",
 	"description": "ExtWS server for Bun",
 	"publishConfig": {
 		"access": "public"
 	},
 	"type": "module",
-	"main": "dist/esm/main.js",
-	"types": "dist/esm/main.d.ts",
+	"main": "dist/main.js",
+	"types": "dist/main.d.ts",
 	"exports": {
 		".": {
-			"import": "./dist/esm/main.js",
+			"types": {
+				"import": "./dist/main.d.ts",
+				"require": "./dist/main.d.cts"
+			},
+			"import": "./dist/main.js",
 			"require": "./dist/main.cjs"
 		}
 	},
 	"dependencies": {
-		"@extws/server": "github:extws-team/server#36d07e1f69ef0360f703bc85619c47d8099d490e"
+		"@extws/server": "github:extws-team/server#d266a08a4cbf32270d2b0530f2a9504ec6c90bf6"
 	},
 	"peerDependencies": {
 		"@kirick/ip": "^0.1.1"
@@ -24,15 +28,16 @@
 		"@kirick/eslint-config": "0.1.30",
 		"@types/bun": "^1.2.2",
 		"eslint": "9.10.0",
-		"typescript": "5.7.3",
-		"vitest": "2.1.2"
+		"publint": "0.3.12",
+		"tsdown": "0.12.2",
+		"typescript": "5.8.3",
+		"unplugin-unused": "0.5.0",
+		"vitest": "3.2.3"
 	},
 	"scripts": {
-		"build": "bun run build:ts && bun run build:cjs",
-		"build:cjs": "bun build src/main.ts --outfile=dist/main.cjs --platform=node --format=cjs --packages=external",
-		"build:ts": "rm -r dist/esm dist/types ; tsc",
+		"build": "tsdown src/main.ts --clean --publint --unused --dts --format esm --format cjs",
 		"check": "bun run lint && bun run build && bun run test",
-		"lint": "eslint . && tsc --skipLibCheck --noemit",
+		"lint": "eslint . && tsc && (cd test && tsc)",
 		"test": "bun test --coverage"
 	},
 	"repository": {

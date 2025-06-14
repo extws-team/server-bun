@@ -1,4 +1,4 @@
-import { type ExtWSClient } from '@extws/server';
+import type { ExtWSClient } from '@extws/server';
 import {
 	// afterAll,
 	describe,
@@ -99,6 +99,8 @@ describe('ExtWSBunServer', () => {
 		);
 
 		expect(response.status).toBe(400);
+		expect(response.headers.get('x-test')).toBe('test');
+		expect(await response.text()).toBe('drop');
 	});
 
 	test('ping', () => {

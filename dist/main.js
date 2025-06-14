@@ -1,37 +1,14 @@
-//#region rolldown:runtime
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __copyProps = (to, from, except, desc) => {
-	if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
-		key = keys[i];
-		if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-			get: ((k) => from[k]).bind(null, key),
-			enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
-		});
-	}
-	return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
-	value: mod,
-	enumerable: true
-}) : target, mod));
-
-//#endregion
-const __extws_server = __toESM(require("@extws/server"));
-const __kirick_ip = __toESM(require("@kirick/ip"));
+import { ExtWS, ExtWSClient } from "@extws/server";
+import { IP } from "@kirick/ip";
 
 //#region src/client.ts
-var ExtWSBunClient = class extends __extws_server.ExtWSClient {
+var ExtWSBunClient = class extends ExtWSClient {
 	bun_client;
 	constructor(server, bun_client) {
 		super(server, {
 			url: bun_client.data.url,
 			headers: bun_client.data.headers,
-			ip: new __kirick_ip.IP(bun_client.remoteAddress)
+			ip: new IP(bun_client.remoteAddress)
 		});
 		this.bun_client = bun_client;
 	}
@@ -69,7 +46,7 @@ var ExtWSBunClient = class extends __extws_server.ExtWSClient {
 
 //#endregion
 //#region src/main.ts
-var ExtWSBunServer = class extends __extws_server.ExtWS {
+var ExtWSBunServer = class extends ExtWS {
 	bun_server;
 	constructor({ path = "/ws", port,...options_rest }) {
 		super(options_rest);
@@ -89,7 +66,7 @@ var ExtWSBunServer = class extends __extws_server.ExtWS {
 						const upgrade_response = await this.options?.onBeforeUpgrade?.({
 							url,
 							headers,
-							ip: new __kirick_ip.IP(ip)
+							ip: new IP(ip)
 						});
 						if (upgrade_response) return upgrade_response;
 						server.upgrade(request, { data: {
@@ -127,4 +104,4 @@ var ExtWSBunServer = class extends __extws_server.ExtWS {
 };
 
 //#endregion
-exports.ExtWSBunServer = ExtWSBunServer;
+export { ExtWSBunServer };

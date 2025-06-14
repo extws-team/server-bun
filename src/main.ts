@@ -1,22 +1,9 @@
 import { ExtWS } from '@extws/server';
-import { type ExtWSOnBeforeUpgradeHandler } from '@extws/server/dev';
+import type { ExtWSOnBeforeUpgradeHandler } from '@extws/server/dev';
 import { IP } from '@kirick/ip';
-import { Server } from 'bun';
+import type { Server } from 'bun';
 import { ExtWSBunClient } from './client.js';
-import { ServerData } from './types.js';
-
-/**
- * Convert `Headers` object to `Map`.
- * @param headers Headers object.
- * @returns Map of headers.
- */
-function headersToMap(headers: Headers) {
-	return new Map<string, string>(
-		Object.entries(
-			headers.toJSON(),
-		),
-	);
-}
+import type { ServerData } from './types.js';
 
 export class ExtWSBunServer extends ExtWS {
 	private bun_server: Server;
@@ -45,7 +32,7 @@ export class ExtWSBunServer extends ExtWS {
 					url.port = port_string;
 
 					if (url.pathname.startsWith(path)) {
-						const headers = headersToMap(request.headers);
+						const { headers } = request;
 						const ip = server.requestIP(request)?.address;
 
 						if (!ip) {
@@ -60,24 +47,7 @@ export class ExtWSBunServer extends ExtWS {
 							});
 
 							if (upgrade_response) {
-								const response_headers = new Headers();
-								if (upgrade_response.headers) {
-									// eslint-disable-next-line max-depth
-									for (const [ key, value ] of Object.entries(upgrade_response.headers)) {
-										// eslint-disable-next-line max-depth
-										if (value !== undefined) {
-											response_headers.set(key, value);
-										}
-									}
-								}
-
-								return new Response(
-									upgrade_response.body ?? '',
-									{
-										status: upgrade_response.status,
-										headers: response_headers,
-									},
-								);
+								return upgrade_response;
 							}
 
 							server.upgrade(
@@ -141,7 +111,7 @@ export class ExtWSBunServer extends ExtWS {
 		);
 	}
 
-	publish(channel: string, payload: string) {
+	override publish(channel: string, payload: string): void {
 		this.bun_server.publish(
 			channel,
 			payload,
@@ -154,4 +124,4 @@ export class ExtWSBunServer extends ExtWS {
 	// }
 }
 
-export { type ExtWSBunClient } from './client.js';
+export type { ExtWSBunClient } from './client.js';

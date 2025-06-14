@@ -1,8 +1,6 @@
-import {
-	ExtWSClient,
-} from '@extws/server';
-import { ServerWebSocket } from 'bun';
-import { ServerData } from './types.js';
+import { ExtWSClient } from '@extws/server';
+import type { ServerWebSocket } from 'bun';
+import type { ServerData } from './types.js';
 import { ExtWSBunServer } from './main.js';
 import { IP } from '@kirick/ip';
 
@@ -25,7 +23,7 @@ export class ExtWSBunClient extends ExtWSClient {
 		this.bun_client = bun_client;
 	}
 
-	protected addToChannel(channel_id: string) {
+	protected override addToChannel(channel_id: string): void {
 		try {
 			this.bun_client.subscribe(channel_id);
 		}
@@ -36,7 +34,7 @@ export class ExtWSBunClient extends ExtWSClient {
 		}
 	}
 
-	protected removeFromChannel(channel_id: string) {
+	protected override removeFromChannel(channel_id: string): void {
 		try {
 			this.bun_client.unsubscribe(channel_id);
 		}
@@ -47,7 +45,7 @@ export class ExtWSBunClient extends ExtWSClient {
 		}
 	}
 
-	protected sendPayload(payload: string) {
+	protected override sendPayload(payload: string): void {
 		try {
 			this.bun_client.send(payload);
 		}
@@ -58,7 +56,7 @@ export class ExtWSBunClient extends ExtWSClient {
 		}
 	}
 
-	disconnect() {
+	override disconnect(): void {
 		try {
 			this.bun_client.close();
 		}
