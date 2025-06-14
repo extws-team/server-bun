@@ -8,7 +8,6 @@ import type { ServerData } from './types.js';
 export class ExtWSBunServer extends ExtWS {
 	private bun_server: Server;
 
-	// eslint-disable-next-line max-lines-per-function
 	constructor({
 		path = '/ws',
 		port,

@@ -22,7 +22,6 @@ declare class ExtWSBunClient extends ExtWSClient {
 //#region src/main.d.ts
 declare class ExtWSBunServer extends ExtWS {
   private bun_server;
-  // eslint-disable-next-line max-lines-per-function
   constructor({
     path,
     port,
