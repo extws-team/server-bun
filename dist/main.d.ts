@@ -34,4 +34,4 @@ declare class ExtWSBunServer extends ExtWS {
   publish(channel: string, payload: string): void;
 }
 //#endregion
-export { ExtWSBunClient, ExtWSBunServer };
+export { type ExtWSBunClient, ExtWSBunServer };

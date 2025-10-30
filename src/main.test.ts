@@ -1,10 +1,12 @@
-import type { ExtWSClient } from '@extws/server';
+// oxlint-disable max-nested-callbacks
+
 import {
 	// afterAll,
 	describe,
 	expect,
 	test,
 } from 'bun:test';
+import type { ExtWSClient } from '@extws/server';
 import {
 	extwsServer,
 	testBroadcast,
@@ -28,12 +30,9 @@ const ERROR_TIMEOUT = 'Timeout: No message received within the specified time';
  */
 function waitMessage(target: WebSocket): Promise<string> {
 	return new Promise<string>((resolve, reject) => {
-		const timeout = setTimeout(
-			() => {
-				reject(new Error(ERROR_TIMEOUT));
-			},
-			100,
-		);
+		const timeout = setTimeout(() => {
+			reject(new Error(ERROR_TIMEOUT));
+		}, 100);
 
 		target.addEventListener(
 			'message',
@@ -52,23 +51,15 @@ function waitMessage(target: WebSocket): Promise<string> {
  * @returns -
  */
 async function createClient(path_postfix?: string): Promise<{
-	websocket: WebSocket,
-	extwsClient: ExtWSClient,
+	websocket: WebSocket;
+	extwsClient: ExtWSClient;
 }> {
 	const websocket = new WebSocket(WEBSOCKET_URL + (path_postfix ?? ''));
 
 	await new Promise((resolve, reject) => {
-		websocket.addEventListener(
-			'open',
-			resolve,
-			{ once: true },
-		);
+		websocket.addEventListener('open', resolve, { once: true });
 
-		websocket.addEventListener(
-			'error',
-			reject,
-			{ once: true },
-		);
+		websocket.addEventListener('error', reject, { once: true });
 	});
 
 	const init_message = await waitMessage(websocket);
@@ -90,8 +81,8 @@ describe('ExtWSBunServer', () => {
 			`${WEBSOCKET_URL.replace('ws://', 'http://')}?drop=1`,
 			{
 				headers: {
-					'Connection': 'Upgrade',
-					'Upgrade': 'websocket',
+					Connection: 'Upgrade',
+					Upgrade: 'websocket',
 					'Sec-WebSocket-Key': 'dGhlIHNhbXBsZSBub25jZQ==',
 					'Sec-WebSocket-Version': '13',
 				},
@@ -212,10 +203,7 @@ describe('disconnect', () => {
 		client2.websocket.close();
 
 		await new Promise((resolve) => {
-			setTimeout(
-				resolve,
-				100,
-			);
+			setTimeout(resolve, 100);
 		});
 
 		expect(extwsServer.clients.size).toBe(0);

@@ -49,11 +49,11 @@ var ExtWSBunClient = class extends ExtWSClient {
 var ExtWSBunServer = class extends ExtWS {
 	bun_server;
 	constructor({ path = "/ws", port,...options_rest }) {
-		super(options_rest);
+		super();
 		const port_string = String(port);
 		this.bun_server = Bun.serve({
 			port,
-			fetch: async (request, server) => {
+			async fetch(request, server) {
 				const url = new URL(request.url);
 				url.protocol = "ws:";
 				url.host = request.headers.get("host") ?? "";
@@ -63,7 +63,7 @@ var ExtWSBunServer = class extends ExtWS {
 					const ip = server.requestIP(request)?.address;
 					if (!ip) throw new Error("IP is not defined.");
 					try {
-						const upgrade_response = await this.options?.onBeforeUpgrade?.({
+						const upgrade_response = await options_rest.onBeforeUpgrade?.({
 							url,
 							headers,
 							ip: new IP(ip)

@@ -1,5 +1,5 @@
 export type ServerData = {
-	id: string,
-	url: URL,
-	headers: Headers,
+	id: string;
+	url: URL;
+	headers: Headers;
 };

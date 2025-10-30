@@ -1,9 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import type {
-	ExtWSEvent,
-	ExtWSClient,
-} from '@extws/server';
+import type { ExtWSClient, ExtWSEvent } from '@extws/server';
 import { ExtWSBunServer } from '../src/main.js';
 
 export const extwsServer = new ExtWSBunServer({
@@ -24,22 +21,14 @@ export const extwsServer = new ExtWSBunServer({
 	},
 });
 
-extwsServer.on(
-	'hello',
-	(event: ExtWSEvent<{ name: string }>) => {
-		event.client.send(
-			'hello',
-			{
-				text: `Hello, ${event.detail.name}!`,
-			},
-		);
-	},
-);
+extwsServer.on('hello', (event) => {
+	event.client.send('hello', {
+		text: `Hello, ${(event as ExtWSEvent<{ name: string }>).detail.name}!`,
+	});
+});
 
 export function testBroadcast() {
-	extwsServer.broadcast({
-		foo: 'bar',
-	});
+	extwsServer.broadcast({ foo: 'bar' });
 }
 
 export function testGroupJoin(extwsClient: ExtWSClient, name: string) {
@@ -51,19 +40,13 @@ export function testGroupLeave(extwsClient: ExtWSClient, name: string) {
 }
 
 export function testSendToGroup(group_name: string) {
-	extwsServer.sendToGroup(
-		group_name,
-		{
-			foo: 'bar',
-		},
-	);
+	extwsServer.sendToGroup(group_name, {
+		foo: 'bar',
+	});
 }
 
 export function testSendToSocket(client_id: string) {
-	extwsServer.sendToSocket(
-		client_id,
-		{
-			foo: 'bar',
-		},
-	);
+	extwsServer.sendToSocket(client_id, {
+		foo: 'bar',
+	});
 }

@@ -21,8 +21,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 }) : target, mod));
 
 //#endregion
-const __extws_server = __toESM(require("@extws/server"));
-const __kirick_ip = __toESM(require("@kirick/ip"));
+let __extws_server = require("@extws/server");
+__extws_server = __toESM(__extws_server);
+let __kirick_ip = require("@kirick/ip");
+__kirick_ip = __toESM(__kirick_ip);
 
 //#region src/client.ts
 var ExtWSBunClient = class extends __extws_server.ExtWSClient {
@@ -72,11 +74,11 @@ var ExtWSBunClient = class extends __extws_server.ExtWSClient {
 var ExtWSBunServer = class extends __extws_server.ExtWS {
 	bun_server;
 	constructor({ path = "/ws", port,...options_rest }) {
-		super(options_rest);
+		super();
 		const port_string = String(port);
 		this.bun_server = Bun.serve({
 			port,
-			fetch: async (request, server) => {
+			async fetch(request, server) {
 				const url = new URL(request.url);
 				url.protocol = "ws:";
 				url.host = request.headers.get("host") ?? "";
@@ -86,7 +88,7 @@ var ExtWSBunServer = class extends __extws_server.ExtWS {
 					const ip = server.requestIP(request)?.address;
 					if (!ip) throw new Error("IP is not defined.");
 					try {
-						const upgrade_response = await this.options?.onBeforeUpgrade?.({
+						const upgrade_response = await options_rest.onBeforeUpgrade?.({
 							url,
 							headers,
 							ip: new __kirick_ip.IP(ip)

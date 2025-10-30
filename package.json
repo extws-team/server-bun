@@ -19,25 +19,26 @@
 		}
 	},
 	"dependencies": {
-		"@extws/server": "github:extws-team/server#9625673278a8a7539883bf0b6afdbdd44f9c9402"
+		"@extws/server": "github:extws-team/server#ff4babb8f048976d66f1cb75510494bfccb5126a"
 	},
 	"peerDependencies": {
 		"@kirick/ip": "^0.1.1"
 	},
 	"devDependencies": {
-		"@kirick/eslint-config": "0.1.30",
+		"@biomejs/biome": "2.3.1",
+		"@kirick/lint": "0.2.12",
 		"@types/bun": "^1.2.2",
-		"eslint": "9.10.0",
-		"publint": "0.3.12",
-		"tsdown": "0.12.2",
-		"typescript": "5.8.3",
-		"unplugin-unused": "0.5.0",
-		"vitest": "3.2.3"
+		"eslint": "9.38.0",
+		"oxlint": "1.24.0",
+		"publint": "0.3.15",
+		"tsdown": "0.15.11",
+		"typescript": "5.9.3",
+		"unplugin-unused": "0.5.4"
 	},
 	"scripts": {
-		"build": "tsdown src/main.ts --clean --publint --unused --dts --format esm --format cjs",
+		"build": "tsdown src/main.ts --clean --tsconfig tsconfig.main.json --publint --unused --dts --format esm --format cjs",
 		"check": "bun run lint && bun run build && bun run test",
-		"lint": "eslint . && tsc && (cd test && tsc)",
+		"lint": "biome format && oxlint && eslint . && tsc -b",
 		"test": "bun test --coverage"
 	},
 	"repository": {
