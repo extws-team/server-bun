@@ -18,21 +18,24 @@
 			"require": "./dist/main.cjs"
 		}
 	},
+	"engines": {
+		"bun": ">=1.4.0"
+	},
 	"dependencies": {
-		"@extws/server": "github:extws-team/server#ff4babb8f048976d66f1cb75510494bfccb5126a"
+		"@extws/server": "github:extws-team/server#a8dbccbe51a0b3e5626ce8758eb9875fb8ad141e"
 	},
 	"peerDependencies": {
 		"@kirick/ip": "^0.1.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.3.1",
-		"@kirick/lint": "0.2.12",
-		"@types/bun": "^1.2.2",
-		"eslint": "9.38.0",
-		"oxlint": "1.24.0",
+		"@biomejs/biome": "2.5.4",
+		"@kirick/lint": "^0.4.1",
+		"@types/bun": "1.4.0",
+		"eslint": "10.7.0",
+		"oxlint": "1.74.0",
 		"publint": "0.3.15",
 		"tsdown": "0.15.11",
-		"typescript": "5.9.3",
+		"typescript": "6.0.3",
 		"unplugin-unused": "0.5.4"
 	},
 	"scripts": {
