@@ -1,13 +1,15 @@
 import { ExtWSClient } from '@extws/server';
 import { IP } from '@kirick/ip';
-import type { ServerWebSocket } from 'bun';
 import { ExtWSBunServer } from './main.js';
 import type { ServerData } from './types.js';
 
 export class ExtWSBunClient extends ExtWSClient {
-	private bun_client: ServerWebSocket<ServerData>;
+	private bun_client: Bun.ServerWebSocket<ServerData>;
 
-	constructor(server: ExtWSBunServer, bun_client: ServerWebSocket<ServerData>) {
+	constructor(
+		server: ExtWSBunServer,
+		bun_client: Bun.ServerWebSocket<ServerData>,
+	) {
 		super(server, {
 			url: bun_client.data.url,
 			headers: bun_client.data.headers,

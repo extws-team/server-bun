@@ -1,6 +1,5 @@
 import { ExtWS, ExtWSClient } from "@extws/server";
 import { IP } from "@kirick/ip";
-
 //#region src/client.ts
 var ExtWSBunClient = class extends ExtWSClient {
 	bun_client;
@@ -43,12 +42,11 @@ var ExtWSBunClient = class extends ExtWSClient {
 		super.disconnect();
 	}
 };
-
 //#endregion
 //#region src/main.ts
 var ExtWSBunServer = class extends ExtWS {
 	bun_server;
-	constructor({ path = "/ws", port,...options_rest }) {
+	constructor({ path = "/ws", port, ...options_rest }) {
 		super();
 		const port_string = String(port);
 		this.bun_server = Bun.serve({
@@ -102,6 +100,5 @@ var ExtWSBunServer = class extends ExtWS {
 		this.bun_server.publish(channel, payload);
 	}
 };
-
 //#endregion
 export { ExtWSBunServer };

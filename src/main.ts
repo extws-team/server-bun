@@ -6,7 +6,7 @@ import { ExtWSBunClient } from './client.js';
 import type { ServerData } from './types.js';
 
 export class ExtWSBunServer extends ExtWS {
-	private bun_server: Server;
+	private bun_server: Server<ServerData>;
 
 	constructor({
 		path = '/ws',
