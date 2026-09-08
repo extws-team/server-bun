@@ -11,7 +11,8 @@ var ExtWSBunClient = class extends ExtWSClient {
 		});
 		this.bun_client = bun_client;
 	}
-	addToChannel(channel_id) {
+	/** @internal */
+	_addToChannel(channel_id) {
 		try {
 			this.bun_client.subscribe(channel_id);
 		} catch (error) {
@@ -19,7 +20,8 @@ var ExtWSBunClient = class extends ExtWSClient {
 			this.disconnect();
 		}
 	}
-	removeFromChannel(channel_id) {
+	/** @internal */
+	_removeFromChannel(channel_id) {
 		try {
 			this.bun_client.unsubscribe(channel_id);
 		} catch (error) {
@@ -27,7 +29,8 @@ var ExtWSBunClient = class extends ExtWSClient {
 			this.disconnect();
 		}
 	}
-	sendPayload(payload) {
+	/** @internal */
+	_sendPayload(payload) {
 		try {
 			this.bun_client.send(payload);
 		} catch (error) {

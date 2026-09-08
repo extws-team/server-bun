@@ -11,10 +11,13 @@ type ServerData = {
 declare class ExtWSBunClient extends ExtWSClient {
   private bun_client;
   constructor(server: ExtWSBunServer, bun_client: Bun.ServerWebSocket<ServerData>);
-  protected addToChannel(channel_id: string): void;
-  protected removeFromChannel(channel_id: string): void;
-  protected sendPayload(payload: string): void;
-  disconnect(): void;
+  /** @internal */
+  override _addToChannel(channel_id: string): void;
+  /** @internal */
+  override _removeFromChannel(channel_id: string): void;
+  /** @internal */
+  override _sendPayload(payload: string): void;
+  override disconnect(): void;
 }
 //#endregion
 //#region src/main.d.ts
@@ -25,7 +28,7 @@ export declare class ExtWSBunServer extends ExtWS {
     port: number;
     onBeforeUpgrade?: ExtWSOnBeforeUpgradeHandler;
   });
-  publish(channel: string, payload: string): void;
+  override publish(channel: string, payload: string): void;
 }
 //#endregion
 export type { ExtWSBunClient };

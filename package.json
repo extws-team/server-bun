@@ -19,7 +19,7 @@
 		}
 	},
 	"dependencies": {
-		"@extws/server": "github:extws-team/server#9f694fe69d8474a97fb01813c41801a6ef9900d5"
+		"@extws/server": "github:extws-team/server#92bee04c5bb32d33c37b4359e48a51dbdf00f322"
 	},
 	"peerDependencies": {
 		"@kirick/ip": "^0.2.1"
@@ -36,7 +36,7 @@
 		"unplugin-unused": "0.6.0"
 	},
 	"scripts": {
-		"build": "tsdown src/main.ts --clean --tsconfig tsconfig.main.json --publint --unused --dts --format esm --format cjs",
+		"build": "tsdown src/main.ts --clean --publint --unused --dts --format esm --format cjs",
 		"check": "lint && bun run build && bun run test",
 		"test": "bun test --coverage"
 	},

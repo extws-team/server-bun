@@ -1,6 +1,7 @@
 {
 	"extends": "./node_modules/@kirick/lint/configs/tsconfig.base.json",
 	"compilerOptions": {},
+	"stripInternal": true,
 	"include": ["src/"],
 	"exclude": ["dist/", "node_modules/"]
 }

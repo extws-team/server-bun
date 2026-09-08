@@ -5,7 +5,7 @@
     "": {
       "name": "@extws/server-bun",
       "dependencies": {
-        "@extws/server": "github:extws-team/server#9f694fe69d8474a97fb01813c41801a6ef9900d5",
+        "@extws/server": "github:extws-team/server#92bee04c5bb32d33c37b4359e48a51dbdf00f322",
       },
       "devDependencies": {
         "@biomejs/biome": "2.5.4",
@@ -62,7 +62,7 @@
 
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.7.3", "", { "dependencies": { "@eslint/core": "^1.2.1", "levn": "^0.4.1" } }, "sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q=="],
 
-    "@extws/server": ["@extws/server@github:extws-team/server#9f694fe", { "dependencies": { "nanoid": "6.0.1", "neoevents": "0.3.0" }, "peerDependencies": { "@kirick/ip": "^0.2.1" } }, "extws-team-server-9f694fe", "sha512-ibpgVtKFxUKZCJHOdKGKMCfKh+GuYaIJcH19yv8yiqLWWB9aGfzej0scMnGFETXK2jOGtzkmqYDQSjE2b0Al5w=="],
+    "@extws/server": ["@extws/server@github:extws-team/server#92bee04", { "dependencies": { "nanoid": "6.0.1", "neoevents": "0.3.0" }, "peerDependencies": { "@kirick/ip": "^0.2.1" } }, "extws-team-server-92bee04", "sha512-G6eiwm+rKMYHUsrBiG5w5VPicrSOt+hIaArkA4FoV6vMhBksQK0zTzskG6sbWFOZjxIKz68O4QrsFl9dRVrFKg=="],
 
     "@humanfs/core": ["@humanfs/core@0.19.1", "", {}, "sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA=="],
 
