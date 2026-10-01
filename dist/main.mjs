@@ -7,7 +7,8 @@ var ExtWSBunClient = class extends ExtWSClient {
 		super(server, {
 			url: bun_client.data.url,
 			headers: bun_client.data.headers,
-			ip: new IP(bun_client.remoteAddress)
+			ip: new IP(bun_client.remoteAddress),
+			data: bun_client.data.data
 		});
 		this.bun_client = bun_client;
 	}
@@ -49,8 +50,8 @@ var ExtWSBunClient = class extends ExtWSClient {
 //#region src/main.ts
 var ExtWSBunServer = class extends ExtWS {
 	bun_server;
-	constructor({ path = "/ws", port, ...options_rest }) {
-		super();
+	constructor({ path = "/ws", port, idle_timeout, ...options_rest }) {
+		super({ idle_timeout });
 		const port_string = String(port);
 		this.bun_server = Bun.serve({
 			port,
@@ -69,11 +70,12 @@ var ExtWSBunServer = class extends ExtWS {
 							headers,
 							ip: new IP(ip)
 						});
-						if (upgrade_response) return upgrade_response;
+						if (upgrade_response instanceof Response) return upgrade_response;
 						server.upgrade(request, { data: {
 							id: "",
 							url,
-							headers
+							headers,
+							data: upgrade_response ? upgrade_response.data : void 0
 						} });
 						return;
 					} catch (error) {
@@ -101,6 +103,9 @@ var ExtWSBunServer = class extends ExtWS {
 	}
 	publish(channel, payload) {
 		this.bun_server.publish(channel, payload);
+	}
+	async close() {
+		await this.bun_server.stop(true);
 	}
 };
 //#endregion

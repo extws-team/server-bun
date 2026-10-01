@@ -5,23 +5,26 @@ import type { Server } from 'bun';
 import { ExtWSBunClient } from './client.js';
 import type { ServerData } from './types.js';
 
-export class ExtWSBunServer extends ExtWS {
-	private bun_server: Server<ServerData>;
+export class ExtWSBunServer<ClientData = undefined> extends ExtWS<ClientData> {
+	private bun_server: Server<ServerData<ClientData>>;
 
 	constructor({
 		path = '/ws',
 		port,
+		idle_timeout,
 		...options_rest
 	}: {
 		path?: string;
 		port: number;
-		onBeforeUpgrade?: ExtWSOnBeforeUpgradeHandler;
-	}) {
-		super();
+		idle_timeout?: number;
+	} & ([ClientData] extends [undefined]
+		? { onBeforeUpgrade?: ExtWSOnBeforeUpgradeHandler<ClientData> }
+		: { onBeforeUpgrade: ExtWSOnBeforeUpgradeHandler<ClientData> })) {
+		super({ idle_timeout });
 
 		const port_string = String(port);
 
-		this.bun_server = Bun.serve<ServerData>({
+		this.bun_server = Bun.serve<ServerData<ClientData>>({
 			port,
 			async fetch(request, server) {
 				const url = new URL(request.url);
@@ -44,16 +47,22 @@ export class ExtWSBunServer extends ExtWS {
 							ip: new IP(ip),
 						});
 
-						if (upgrade_response) {
+						if (upgrade_response instanceof Response) {
 							return upgrade_response;
 						}
 
-						server.upgrade(request, {
+						(
+							server.upgrade as (
+								request: Request,
+								options: { data: ServerData<ClientData> },
+							) => boolean
+						)(request, {
 							data: {
 								id: '',
 								url,
 								headers,
-							} satisfies ServerData,
+								data: upgrade_response ? upgrade_response.data : undefined,
+							} as unknown as ServerData<ClientData>,
 						});
 
 						return;
@@ -95,10 +104,9 @@ export class ExtWSBunServer extends ExtWS {
 		this.bun_server.publish(channel, payload);
 	}
 
-	// TODO: investigate why that call hangs
-	// async close() {
-	// 	await this.bun_server.stop();
-	// }
+	override async close(): Promise<void> {
+		await this.bun_server.stop(true);
+	}
 }
 
 export type { ExtWSBunClient } from './client.js';
