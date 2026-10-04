@@ -106,6 +106,7 @@ var ExtWSBunServer = class extends _extws_server.ExtWS {
 		this.bun_server.publish(channel, payload);
 	}
 	async close() {
+		this.stopClientsWatch();
 		await this.bun_server.stop(true);
 	}
 };

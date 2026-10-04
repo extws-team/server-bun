@@ -105,6 +105,7 @@ export class ExtWSBunServer<ClientData = undefined> extends ExtWS<ClientData> {
 	}
 
 	override async close(): Promise<void> {
+		this.stopClientsWatch();
 		await this.bun_server.stop(true);
 	}
 }

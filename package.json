@@ -19,7 +19,7 @@
 		}
 	},
 	"dependencies": {
-		"@extws/server": "github:extws-team/server#f18fafb648fbb0a7fe2bf9c08e927f0e68d4bc88"
+		"@extws/server": "github:extws-team/server#2626b8034c2cf77da3467cef8174d6ce7132a0b4"
 	},
 	"peerDependencies": {
 		"@kirick/ip": "^0.2.1"
