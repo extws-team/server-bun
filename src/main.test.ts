@@ -1,12 +1,8 @@
 // oxlint-disable max-nested-callbacks
 
-import {
-	// afterAll,
-	describe,
-	expect,
-	test,
-} from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
 import type { ExtWSClient } from '@extws/server';
+import { ExtWSBunServer } from './main.js';
 import {
 	extwsServer,
 	type TestData,
@@ -20,9 +16,9 @@ import {
 const WEBSOCKET_URL = 'ws://localhost:8080/ws';
 const ERROR_TIMEOUT = 'Timeout: No message received within the specified time';
 
-// afterAll(async () => {
-// 	await extwsServer.close();
-// });
+afterAll(async () => {
+	await extwsServer.close();
+});
 
 /**
  * Wait for a message from the target WebSocket with a timeout.
@@ -102,6 +98,45 @@ describe('ExtWSBunServer', () => {
 		expect(client_named.extwsClient.data).toEqual({ name: 'alice' });
 
 		client_named.extwsClient.disconnect();
+	});
+
+	test('request that is not an upgrade is rejected', async () => {
+		const response = await fetch(WEBSOCKET_URL.replace('ws://', 'http://'));
+
+		expect(response.status).toBe(426);
+	});
+
+	test('other paths are not found', async () => {
+		const responses = await Promise.all(
+			['/', '/wsx', '/ws/extra'].map((path) =>
+				fetch(`http://localhost:8080${path}`),
+			),
+		);
+
+		expect(responses.map((response) => response.status)).toEqual([
+			404, 404, 404,
+		]);
+	});
+
+	test('client url keeps the Host header', async () => {
+		const promise = extwsServer.wait('connect');
+
+		// a raw upgrade request can set its own Host header
+		const response = await fetch(WEBSOCKET_URL.replace('ws://', 'http://'), {
+			headers: {
+				Host: 'example.com',
+				Connection: 'Upgrade',
+				Upgrade: 'websocket',
+				'Sec-WebSocket-Key': 'dGhlIHNhbXBsZSBub25jZQ==',
+				'Sec-WebSocket-Version': '13',
+			},
+		});
+		expect(response.status).toBe(101);
+
+		const event = await promise;
+		expect(event.client.url.href).toBe('ws://example.com/ws');
+
+		event.client.disconnect();
 	});
 
 	test('ping', () => {
@@ -217,5 +252,23 @@ describe('disconnect', () => {
 		});
 
 		expect(extwsServer.clients.size).toBe(0);
+	});
+});
+
+describe('close', () => {
+	test('stops the server and closes connections', async () => {
+		const server = new ExtWSBunServer({ port: 8081 });
+		const websocket = new WebSocket('ws://localhost:8081/ws');
+		const promise_closed = new Promise((resolve) => {
+			websocket.addEventListener('close', resolve, { once: true });
+		});
+		await new Promise((resolve) => {
+			websocket.addEventListener('message', resolve, { once: true });
+		});
+
+		await server.close();
+		await promise_closed;
+
+		expect(fetch('http://localhost:8081/ws')).rejects.toThrow();
 	});
 });
