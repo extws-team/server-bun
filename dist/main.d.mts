@@ -1,23 +1,22 @@
 import { ExtWS, ExtWSClient } from "@extws/server";
-import { ExtWSOnBeforeUpgradeHandler } from "@extws/server/dev";
+import { ExtWSOnBeforeUpgradeOptions } from "@extws/server/dev";
 import { ServerWebSocket } from "bun";
-type ServerData = {
+type ServerData<TData extends Record<string, unknown> | undefined> = {
   id: string;
   url: URL;
   headers: Headers;
+  data: TData;
 };
-declare class ExtWSBunClient extends ExtWSClient {
+declare class ExtWSBunClient<TData extends Record<string, unknown> | undefined = undefined> extends ExtWSClient<TData> {
   private bun_client;
-  constructor(server: ExtWSBunServer, bun_client: ServerWebSocket<ServerData>);
+  constructor(server: ExtWSBunServer<TData>, bun_client: ServerWebSocket<ServerData<TData>>);
   override disconnect(): void;
 }
-export declare class ExtWSBunServer extends ExtWS {
+export declare class ExtWSBunServer<TData extends Record<string, unknown> | undefined = undefined> extends ExtWS<TData> {
   private bun_server;
   constructor({ path, port, ...options_rest }: {
     path?: string;
     port: number;
-    onBeforeUpgrade?: ExtWSOnBeforeUpgradeHandler;
-  });
-  protected override publish(channel: string, payload: string): void;
+  } & ExtWSOnBeforeUpgradeOptions<TData>);
 }
 export type { ExtWSBunClient };

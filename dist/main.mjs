@@ -7,7 +7,8 @@ var ExtWSBunClient = class extends ExtWSClient {
 		super(server, {
 			url: bun_client.data.url,
 			headers: bun_client.data.headers,
-			ip: new IP(bun_client.remoteAddress)
+			ip: new IP(bun_client.remoteAddress),
+			data: bun_client.data.data
 		});
 		this.bun_client = bun_client;
 	}
@@ -63,16 +64,17 @@ var ExtWSBunServer = class extends ExtWS {
 					const ip = server.requestIP(request)?.address;
 					if (!ip) throw new Error("IP is not defined.");
 					try {
-						const upgrade_response = await options_rest.onBeforeUpgrade?.({
+						const upgrade_result = await options_rest.onBeforeUpgrade?.({
 							url,
 							headers,
 							ip: new IP(ip)
 						});
-						if (upgrade_response) return upgrade_response;
+						if (upgrade_result instanceof Response) return upgrade_result;
 						server.upgrade(request, { data: {
 							id: "",
 							url,
-							headers
+							headers,
+							data: upgrade_result
 						} });
 						return;
 					} catch (error) {
@@ -98,6 +100,7 @@ var ExtWSBunServer = class extends ExtWS {
 			}
 		});
 	}
+	/** @internal */
 	publish(channel, payload) {
 		this.bun_server.publish(channel, payload);
 	}

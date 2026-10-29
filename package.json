@@ -20,7 +20,7 @@
 		}
 	},
 	"dependencies": {
-		"@extws/server": "file:/tmp/devpack/github/@extws/server/pack-7a1f7fa.tar.gz"
+		"@extws/server": "github:extws-team/server#48f82f8e050b6d034de84ae579a3308cb47bacb3"
 	},
 	"peerDependencies": {
 		"@kirick/ip": "^0.2.1"

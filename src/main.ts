@@ -1,12 +1,14 @@
 import { ExtWS } from '@extws/server';
-import type { ExtWSOnBeforeUpgradeHandler } from '@extws/server/dev';
+import type { ExtWSOnBeforeUpgradeOptions } from '@extws/server/dev';
 import { IP } from '@kirick/ip';
 import type { Server } from 'bun';
 import { ExtWSBunClient } from './client.js';
 import type { ServerData } from './types.js';
 
-export class ExtWSBunServer extends ExtWS {
-	private bun_server: Server<ServerData>;
+export class ExtWSBunServer<
+	TData extends Record<string, unknown> | undefined = undefined,
+> extends ExtWS<TData> {
+	private bun_server: Server<ServerData<TData>>;
 
 	constructor({
 		path = '/ws',
@@ -15,13 +17,12 @@ export class ExtWSBunServer extends ExtWS {
 	}: {
 		path?: string;
 		port: number;
-		onBeforeUpgrade?: ExtWSOnBeforeUpgradeHandler;
-	}) {
+	} & ExtWSOnBeforeUpgradeOptions<TData>) {
 		super();
 
 		const port_string = String(port);
 
-		this.bun_server = Bun.serve<ServerData>({
+		this.bun_server = Bun.serve<ServerData<TData>>({
 			port,
 			async fetch(request, server) {
 				const url = new URL(request.url);
@@ -38,14 +39,14 @@ export class ExtWSBunServer extends ExtWS {
 					}
 
 					try {
-						const upgrade_response = await options_rest.onBeforeUpgrade?.({
+						const upgrade_result = await options_rest.onBeforeUpgrade?.({
 							url,
 							headers,
 							ip: new IP(ip),
 						});
 
-						if (upgrade_response) {
-							return upgrade_response;
+						if (upgrade_result instanceof Response) {
+							return upgrade_result;
 						}
 
 						server.upgrade(request, {
@@ -53,7 +54,9 @@ export class ExtWSBunServer extends ExtWS {
 								id: '',
 								url,
 								headers,
-							} satisfies ServerData,
+								// undefined only gets here when TData allows it, otherwise the hook is required and cannot return it
+								data: upgrade_result as TData,
+							} satisfies ServerData<TData>,
 						});
 
 						return;
@@ -91,7 +94,8 @@ export class ExtWSBunServer extends ExtWS {
 		});
 	}
 
-	protected override publish(channel: string, payload: string): void {
+	/** @internal */
+	publish(channel: string, payload: string): void {
 		this.bun_server.publish(channel, payload);
 	}
 

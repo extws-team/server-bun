@@ -4,14 +4,20 @@ import type { ServerWebSocket } from 'bun';
 import { ExtWSBunServer } from './main.js';
 import type { ServerData } from './types.js';
 
-export class ExtWSBunClient extends ExtWSClient {
-	private bun_client: ServerWebSocket<ServerData>;
+export class ExtWSBunClient<
+	TData extends Record<string, unknown> | undefined = undefined,
+> extends ExtWSClient<TData> {
+	private bun_client: ServerWebSocket<ServerData<TData>>;
 
-	constructor(server: ExtWSBunServer, bun_client: ServerWebSocket<ServerData>) {
+	constructor(
+		server: ExtWSBunServer<TData>,
+		bun_client: ServerWebSocket<ServerData<TData>>,
+	) {
 		super(server, {
 			url: bun_client.data.url,
 			headers: bun_client.data.headers,
 			ip: new IP(bun_client.remoteAddress),
+			data: bun_client.data.data,
 		});
 
 		this.bun_client = bun_client;

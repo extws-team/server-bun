@@ -3,7 +3,9 @@
 import type { ExtWSClient, ExtWSEvent } from '@extws/server';
 import { ExtWSBunServer } from '../src/main.js';
 
-export const extwsServer = new ExtWSBunServer({
+export type TestData = { name: string } | undefined;
+
+export const extwsServer = new ExtWSBunServer<TestData>({
 	port: 8080,
 	async onBeforeUpgrade({ url }) {
 		await new Promise((resolve) => {
@@ -18,6 +20,11 @@ export const extwsServer = new ExtWSBunServer({
 				},
 			});
 		}
+
+		const name = url.searchParams.get('name');
+		if (name) {
+			return { name };
+		}
 	},
 });
 
@@ -31,11 +38,17 @@ export function testBroadcast() {
 	extwsServer.broadcast({ foo: 'bar' });
 }
 
-export function testGroupJoin(extwsClient: ExtWSClient, name: string) {
+export function testGroupJoin(
+	extwsClient: ExtWSClient<TestData>,
+	name: string,
+) {
 	extwsClient.join(name);
 }
 
-export function testGroupLeave(extwsClient: ExtWSClient, name: string) {
+export function testGroupLeave(
+	extwsClient: ExtWSClient<TestData>,
+	name: string,
+) {
 	extwsClient.leave(name);
 }
 
