@@ -1,42 +1,18 @@
-//#region rolldown:runtime
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __copyProps = (to, from, except, desc) => {
-	if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
-		key = keys[i];
-		if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-			get: ((k) => from[k]).bind(null, key),
-			enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
-		});
-	}
-	return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
-	value: mod,
-	enumerable: true
-}) : target, mod));
-
-//#endregion
-let __extws_server = require("@extws/server");
-__extws_server = __toESM(__extws_server);
-let __kirick_ip = require("@kirick/ip");
-__kirick_ip = __toESM(__kirick_ip);
-
-//#region src/client.ts
-var ExtWSBunClient = class extends __extws_server.ExtWSClient {
+Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+let _extws_server = require("@extws/server");
+let _kirick_ip = require("@kirick/ip");
+// src/client.ts
+var ExtWSBunClient = class extends _extws_server.ExtWSClient {
 	bun_client;
 	constructor(server, bun_client) {
 		super(server, {
 			url: bun_client.data.url,
 			headers: bun_client.data.headers,
-			ip: new __kirick_ip.IP(bun_client.remoteAddress)
+			ip: new _kirick_ip.IP(bun_client.remoteAddress)
 		});
 		this.bun_client = bun_client;
 	}
+	/** @internal */
 	addToChannel(channel_id) {
 		try {
 			this.bun_client.subscribe(channel_id);
@@ -45,6 +21,7 @@ var ExtWSBunClient = class extends __extws_server.ExtWSClient {
 			this.disconnect();
 		}
 	}
+	/** @internal */
 	removeFromChannel(channel_id) {
 		try {
 			this.bun_client.unsubscribe(channel_id);
@@ -53,6 +30,7 @@ var ExtWSBunClient = class extends __extws_server.ExtWSClient {
 			this.disconnect();
 		}
 	}
+	/** @internal */
 	sendPayload(payload) {
 		try {
 			this.bun_client.send(payload);
@@ -68,12 +46,10 @@ var ExtWSBunClient = class extends __extws_server.ExtWSClient {
 		super.disconnect();
 	}
 };
-
-//#endregion
-//#region src/main.ts
-var ExtWSBunServer = class extends __extws_server.ExtWS {
+// src/main.ts
+var ExtWSBunServer = class extends _extws_server.ExtWS {
 	bun_server;
-	constructor({ path = "/ws", port,...options_rest }) {
+	constructor({ path = "/ws", port, ...options_rest }) {
 		super();
 		const port_string = String(port);
 		this.bun_server = Bun.serve({
@@ -91,7 +67,7 @@ var ExtWSBunServer = class extends __extws_server.ExtWS {
 						const upgrade_response = await options_rest.onBeforeUpgrade?.({
 							url,
 							headers,
-							ip: new __kirick_ip.IP(ip)
+							ip: new _kirick_ip.IP(ip)
 						});
 						if (upgrade_response) return upgrade_response;
 						server.upgrade(request, { data: {
@@ -127,6 +103,4 @@ var ExtWSBunServer = class extends __extws_server.ExtWS {
 		this.bun_server.publish(channel, payload);
 	}
 };
-
-//#endregion
 exports.ExtWSBunServer = ExtWSBunServer;

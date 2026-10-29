@@ -17,7 +17,8 @@ export class ExtWSBunClient extends ExtWSClient {
 		this.bun_client = bun_client;
 	}
 
-	protected override addToChannel(channel_id: string): void {
+	/** @internal */
+	addToChannel(channel_id: string): void {
 		try {
 			this.bun_client.subscribe(channel_id);
 		} catch (error) {
@@ -27,7 +28,8 @@ export class ExtWSBunClient extends ExtWSClient {
 		}
 	}
 
-	protected override removeFromChannel(channel_id: string): void {
+	/** @internal */
+	removeFromChannel(channel_id: string): void {
 		try {
 			this.bun_client.unsubscribe(channel_id);
 		} catch (error) {
@@ -37,7 +39,8 @@ export class ExtWSBunClient extends ExtWSClient {
 		}
 	}
 
-	protected override sendPayload(payload: string): void {
+	/** @internal */
+	sendPayload(payload: string): void {
 		try {
 			this.bun_client.send(payload);
 		} catch (error) {
